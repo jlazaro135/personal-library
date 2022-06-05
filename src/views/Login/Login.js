@@ -5,17 +5,20 @@ import Button from "components/Button";
 function Login({
 
 }){
-    const [userEmail, setUserEmail]= useState("");
-    const [password, setPassword]= useState("");
+    const [form, setForm] = useState({
+        userEmail: '',
+        password: '',
+    });
+
     const [hasLoginFailed, setHasLoginFailed] = useState(false);
     const [hasLoginSucceeded, setHasLoginSucceeded] = useState(false);
 
-    function handleEmail(event){
-        setUserEmail(event.target.value);
-    }
-    function handlePassword(event){
-        setPassword(event.target.value);
-    }
+    function handleInputChanged(event) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      [event.target.name]: event.target.value
+    }));
+  }
 
     async function handleSubmit(e){
         e.preventDefault();
@@ -27,8 +30,8 @@ function Login({
                   'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                  username: userEmail,
-                  password
+                  username: form.userEmail,
+                  password: form.password
                 })
               });if (response.ok) {
                 setHasLoginSucceeded(true);
@@ -46,8 +49,8 @@ function Login({
     return (
         <div>
             <form onSubmit={handleSubmit}>
-                <Input type="email" onChange={handleEmail} value={userEmail}/>
-                <Input  type="password" onChange={handlePassword} value={password}/>
+                <Input type="email" name="userEmail" onChange={handleInputChanged} value={form.userEmail}/>
+                <Input  type="password" name="password" onChange={handleInputChanged} value={form.password}/>
                 <Button type="submit" textButton="Botón"></Button>
         </form>
         <div>
