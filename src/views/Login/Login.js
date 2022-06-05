@@ -10,8 +10,11 @@ function Login({
         password: '',
     });
 
-    const [hasLoginFailed, setHasLoginFailed] = useState(false);
-    const [hasLoginSucceeded, setHasLoginSucceeded] = useState(false);
+    const [requestStatus, setRequestStatus] = useState({
+        isLoading: false,
+        hasFailed: false,
+        hasSucceeded: false
+      });
 
     function handleInputChanged(event) {
     setForm((currentForm) => ({
@@ -22,8 +25,12 @@ function Login({
 
     async function handleSubmit(e){
         e.preventDefault();
-        console.log('hola');
         try {
+            setRequestStatus({
+                isLoading: true,
+                hasFailed: false,
+                hasSucceeded: false
+              });
             const response = await fetch('https://librarify.latteandfront.es/api/login_check', {
                 method: 'POST',
                 headers: {
@@ -33,16 +40,26 @@ function Login({
                   username: form.userEmail,
                   password: form.password
                 })
-              });if (response.ok) {
-                setHasLoginSucceeded(true);
-                setHasLoginFailed(false);
+              });
+              if (response.ok) {
+                setRequestStatus({
+                    isLoading: false,
+                    hasFailed: false,
+                    hasSucceeded: true
+                });
               } else {
-                setHasLoginFailed(true);
-                setHasLoginSucceeded(false);
-              }
+                setRequestStatus({
+                    isLoading: false,
+                    hasFailed: true,
+                    hasSucceeded: false
+                });
+            }
             } catch (error) {
-              setHasLoginFailed(true);
-              setHasLoginSucceeded(false);
+                setRequestStatus({
+                    isLoading: false,
+                    hasFailed: true,
+                    hasSucceeded: false
+                });
             }
           }
     
@@ -54,8 +71,9 @@ function Login({
                 <Button type="submit" textButton="Botón"></Button>
         </form>
         <div>
-            {hasLoginSucceeded && <div>alerta success</div>}
-            {hasLoginFailed && <div>alerta fail</div>}
+            {requestStatus.isLoading && <div>está cargando</div>}
+            {requestStatus.hasSucceeded && <div>alerta success</div>}
+            {requestStatus.hasFailed && <div>alerta fail</div>}
         </div>
         </div>
     );
