@@ -28,7 +28,7 @@ function Login(){
             setRequestStatus({
                 isLoading: true
               });
-            const json = await await apiClient.post('/login_check', {
+            const json = await apiClient.post('/login_check', {
                   username: form.userEmail,
                   password: form.password
               });
