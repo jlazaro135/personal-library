@@ -1,13 +1,11 @@
 import React, { useState } from "react";
-import Input from "components/Input";
-import Button from "components/Button";
+import { JWT_KEY } from "consts/app";
+import LoginView from "./LoginView";
 
-function Login({
-
-}){
+function Login(){
     const [form, setForm] = useState({
         userEmail: '',
-        password: '',
+        password: ''
     });
 
     const [requestStatus, setRequestStatus] = useState({
@@ -27,9 +25,7 @@ function Login({
         e.preventDefault();
         try {
             setRequestStatus({
-                isLoading: true,
-                hasFailed: false,
-                hasSucceeded: false
+                isLoading: true
               });
             const response = await fetch('https://librarify.latteandfront.es/api/login_check', {
                 method: 'POST',
@@ -42,9 +38,9 @@ function Login({
                 })
               });
               if (response.ok) {
+                const json = await response.json();
+                localStorage.setItem(JWT_KEY, JSON.stringify(json.data));
                 setRequestStatus({
-                    isLoading: false,
-                    hasFailed: false,
                     hasSucceeded: true
                 });
               } else {
@@ -64,18 +60,11 @@ function Login({
           }
     
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <Input type="email" name="userEmail" onChange={handleInputChanged} value={form.userEmail}/>
-                <Input  type="password" name="password" onChange={handleInputChanged} value={form.password}/>
-                <Button type="submit" textButton="Botón"></Button>
-        </form>
-        <div>
-            {requestStatus.isLoading && <div>está cargando</div>}
-            {requestStatus.hasSucceeded && <div>alerta success</div>}
-            {requestStatus.hasFailed && <div>alerta fail</div>}
-        </div>
-        </div>
+        <LoginView 
+        handleInputChanged={handleInputChanged} 
+        form={form} 
+        requestStatus={requestStatus} 
+        handleSubmit={handleSubmit} />
     );
 };
 
