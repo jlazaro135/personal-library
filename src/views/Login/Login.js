@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { JWT_KEY } from "consts/app";
+import {useAuthContext} from 'contexts/authContext';
 import apiClient from "utils/apiClients";
 import LoginView from "./LoginView";
 
@@ -22,19 +22,25 @@ function Login(){
     }));
   }
 
+    const {login} = useAuthContext();
+
     async function handleSubmit(e){
         e.preventDefault();
         try {
             setRequestStatus({
-                isLoading: true
+                isLoading: true,
+                hasSucceeded: false,
+                hasFailed: false
               });
             const json = await apiClient.post('/login_check', {
                   username: form.userEmail,
                   password: form.password
               });
-              localStorage.setItem(JWT_KEY, JSON.stringify(json.data));
+              login(json.data);
               setRequestStatus({
-                hasSucceeded: true
+                hasSucceeded: true,
+                isLoading: false,
+                hasFailed: false
             });
             } catch (error) {
                 setRequestStatus({
